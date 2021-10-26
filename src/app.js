@@ -1,5 +1,5 @@
 const colors = require('colors');
-const {inquirerMenu, pause, readInput} = require('./js/inquirer');
+const {inquirerMenu, pause, readInput, listDeleteTasks, confirmDelete, listSelectTasks} = require('./js/inquirer');
 const Tasks = require('./models/tasks');
 // const {mostrarMenu} = require('./js/messages');
 
@@ -18,9 +18,22 @@ async function main() {
                 tasks.newTask(desc);
                 break;
             case '2':
-                console.log(tasks.tasksArr);
-                console.log(tasks.tasks);
+                tasks.listTasks();
                 break;
+            case '3':
+                tasks.listTasksByQuery(true);
+                break;
+            case '4':
+                tasks.listTasksByQuery(false);
+                break;
+            case '5':
+                const ids = await listSelectTasks(tasks.tasksArr);
+                tasks.completeTasks(ids);
+                break;              
+            case '6':
+                const id = await listDeleteTasks(tasks.tasksArr);
+                if ( id && await confirmDelete('¿Está seguro?')) tasks.deleteTask(id);
+                break;               
             default:
                 break;
         }

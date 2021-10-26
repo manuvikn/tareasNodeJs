@@ -18,6 +18,12 @@ class Tasks {
 
     }
 
+    deleteTask(id) {
+        if (this.tasks[id]) {
+            delete this.tasks[id];
+        }
+    }
+
     get tasksArr() {
 
         const tasks = [];
@@ -37,9 +43,44 @@ class Tasks {
 
     }
 
+    completeTasks(ids) {
+
+        this.tasksArr.forEach( (item) => {
+            let index = ids.indexOf(item.id);
+            if (index !== -1) {
+                if (!this.tasks[item.id].dateComplete) {
+                    this.tasks[item.id].dateComplete = new Date().toISOString();
+                }
+                ids.splice(index, 1);
+            } else {
+                this.tasks[item.id].dateComplete = null;
+            }
+        });
+
+    }
+
     saveTasks() {
     
         fs.writeFileSync(dirbase, JSON.stringify(this.tasksArr));
+
+    }
+
+    listTasks() {
+
+        this.tasksArr.forEach( (item, index) => {
+            let i = `${index + 1}`.green;
+            console.log(`${ i } ${item['desc']} :: ${ item['dateComplete'] ? 'Completada'.green : 'Pendiente'.red }`);
+        } );
+
+    }
+
+    listTasksByQuery( complete ) {
+
+        const listTasks = this.tasksArr.filter(item => Boolean(item['dateComplete']) === complete);
+        listTasks.forEach( (item, index) => {
+            let i = `${index + 1}`.green;
+            console.log(`${ i } ${item['desc']} :: ${ item['dateComplete'] ? item['dateComplete'].green : 'Pendiente'.red }`);
+        } );
 
     }
 
